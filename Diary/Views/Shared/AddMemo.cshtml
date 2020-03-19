@@ -1,0 +1,14 @@
+﻿@model Diary.Models.Memo
+
+
+@Html.HiddenFor(x => x.Type, new { Value = "Памятка" })
+<div class="form-row form-group">
+    @Html.LabelFor(x => x.Theme, "Введите тему записи:", new { @class = "col-form-label col-md-4" })
+    @Html.TextBoxFor(x => x.Theme, new { @class = "form-control col-md-8" })
+    @Html.ValidationMessageFor(x => x.Theme, null, new { @class = "text-danger" })
+</div>
+<div class="form-row form-group">
+    @Html.LabelFor(x => x.StartTime, "Введите дату и время начала:(dd.mm.yyyy hh:mm)", new { @class = "col-form-label col-md-4" })
+    @Html.TextBoxFor(x => x.StartTime, new { @class = "form-control col-md-8" })
+    @Html.ValidationMessageFor(x => x.StartTime, null, new { @class = "text-danger" })
+</div>

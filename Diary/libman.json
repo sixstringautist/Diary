@@ -1,0 +1,14 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "bootstrap-datetimepicker@4.17.47",
+      "destination": "lib/bootstrap-datetimepicker/"
+    },
+    {
+      "library": "moment.js@2.24.0",
+      "destination": "lib/moment.js/"
+    }
+  ]
+}

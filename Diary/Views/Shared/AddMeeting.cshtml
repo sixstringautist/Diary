@@ -1,0 +1,27 @@
+﻿@model Diary.Models.Meeting
+
+
+    <p class="text-danger">
+        @Html.ValidationMessage("intersect")
+    </p>
+@Html.HiddenFor(x => x.Type, new { Value = "Встреча" })
+<div class="form-row form-group">
+    @Html.LabelFor(x => x.Theme, "Введите тему записи:", new { @class = "col-form-label col-md-4" })
+    @Html.TextBoxFor(x => x.Theme, new { @class = "form-control col-md-8" })
+    @Html.ValidationMessageFor(x => x.Theme, null, new { @class = "text-danger" })
+</div>
+<div class="form-row form-group">
+    @Html.LabelFor(x => x.StartTime, "Введите дату и время начала:(dd.mm.yyyy hh:mm)", new { @class = "col-form-label col-md-4" })
+    @Html.TextBoxFor(x => x.StartTime, new { @class = "form-control col-md-8" })
+    @Html.ValidationMessageFor(x => x.StartTime, null, new { @class = "text-danger" })
+</div>
+<div id="enddate" class="form-row form-group">
+    @Html.LabelFor(x => x.EndTime, "Введите дату и время окончания(dd.mm.yyyy hh:mm)", new { @class = "col-form-label col-md-4" })
+    @Html.TextBoxFor(x => x.EndTime, new { @class = "form-control col-md-8" })
+    @Html.ValidationMessageFor(x => x.EndTime, null, new { @class = "text-danger" })
+</div>
+<div id="address" class="form-row form-group">
+    @Html.LabelFor(x => x.Address, "Введите адрес:", new { @class = "col-form-label col-md-4" })
+    @Html.TextBoxFor(x => x.Address, new { @class = "form-control col-md-8" })
+    @Html.ValidationMessageFor(x => x.Address, null, new { @class = "text-danger" })
+</div>

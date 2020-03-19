@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using Diary.Models;
+using Diary.Util;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -12,6 +10,7 @@ namespace Diary
     {
         protected void Application_Start()
         {
+            ModelBinders.Binders.Add(typeof(Memo), new MemoModelBinder());
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

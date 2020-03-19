@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Web.Optimization;
+﻿using System.Web.Optimization;
 
 namespace Diary
 {
@@ -10,6 +9,8 @@ namespace Diary
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
+            bundles.Add(new ScriptBundle("~/bundles/ajax")
+                .Include("~/Scripts/jquery.unobtrusive-ajax*"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
@@ -18,13 +19,19 @@ namespace Diary
             // готово к выпуску, используйте средство сборки по адресу https://modernizr.com, чтобы выбрать только необходимые тесты.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
-
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"));
+                      "~/Scripts/bootstrap.bundle.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/datetimepicker")
+                .Include("~/lib/moment/moment.js")
+                .Include("~/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"));
+
+            bundles.Add(new StyleBundle("~/Content/datetimepicker")
+                .Include("~/lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css"));
         }
     }
 }

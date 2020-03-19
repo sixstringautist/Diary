@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using Diary.Interfaces;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 namespace Diary.Models
 {
-    public class UnitOfWork : IRepository<Memo>, IRepository<Buisness>, IRepository<Meeting>,IDisposable
+    public class UnitOfWork
     {
         DiaryDbContext DbContext;
 
@@ -20,7 +17,7 @@ namespace Diary.Models
             foreach (var el in p)
             {
                 if (p == null)
-                    throw new ArgumentNullException("");
+                    throw new ArgumentNullException($"{nameof(el)} was null.");
             }
         }
         public ReturnType Apply<EntityType, ReturnType>(DbSet<EntityType> set, Func<DbSet<EntityType>, ReturnType> func)
@@ -41,25 +38,26 @@ namespace Diary.Models
 
         public void Add(Memo item)
         {
-            Add(item);
+            Add(DbContext.Memos,item);
         }
 
         public void Add(Buisness item)
         {
-            Add(item);
+            Add(DbContext.Memos, item);
         }
 
         public void Add(Meeting item)
         {
-            Add(item);
+            Add(DbContext.Memos, item);
         }
         #endregion
 
         #region Delete
-        private void Delete<T>(DbSet<T> set,T item)
-            where T: Memo
+        private void Delete<T>(DbSet<T> set, T item)
+            where T : Memo
         {
-            Apply<T,T>(set, x=> {
+            Apply<T, T>(set, x =>
+            {
                 x.Attach(item);
                 x.Remove(item);
                 return null;
@@ -68,12 +66,12 @@ namespace Diary.Models
 
         public void Delete(Memo item)
         {
-            Delete(DbContext.Memos,item);
+            Delete(DbContext.Memos, item);
         }
 
         public void Delete(Buisness item)
         {
-            Delete(DbContext.Buisnesses,item);
+            Delete(DbContext.Buisnesses, item);
         }
 
         public void Delete(Meeting item)
@@ -83,10 +81,10 @@ namespace Diary.Models
         #endregion
 
         #region Filter
-        private IEnumerable<T> Filter<T>(DbSet<T> set,Func<T, bool> predicate)
-            where T: Memo
+        private IEnumerable<T> Filter<T>(DbSet<T> set, Func<T, bool> predicate)
+            where T : Memo
         {
-            return Apply(set, x=> x.Where(predicate));
+            return Apply(set, x => x.Where(predicate));
         }
         public IEnumerable<Memo> Filter(Func<Memo, bool> predicate)
         {
@@ -110,22 +108,12 @@ namespace Diary.Models
         {
             return Apply(set, s => s.FirstOrDefault(predicate));
         }
-        public Memo Get(Func<Memo, bool> predicate)
+        public ReturnType Get<ReturnType>(Func<ReturnType, bool> predicate)
+            where ReturnType:Memo
         {
-            return Get(DbContext.Memos, predicate);
-        }
-
-        public Buisness Get(Func<Buisness, bool> predicate)
-        {
-            return Get(DbContext.Buisnesses, predicate);
-        }
-
-        public Meeting Get(Func<Meeting, bool> predicate)
-        {
-            return Get(DbContext.Meetings, predicate);
+            return Get<ReturnType>(DbContext.Set<ReturnType>(),predicate);
         }
         #endregion
-
         #region GetAll
         private IEnumerable<ReturnType> GetAll<ReturnType>(DbSet<ReturnType> set)
             where ReturnType : Memo
@@ -135,23 +123,15 @@ namespace Diary.Models
         public IEnumerable<ReturnType> GetAll<ReturnType>()
             where ReturnType : Memo
         {
-            return (this as IRepository<ReturnType>).GetAll();
-        }
-        IEnumerable<Memo> IRepository<Memo>.GetAll() 
-        {
-            return GetAll(DbContext.Memos);
-        }
-
-        IEnumerable<Buisness> IRepository<Buisness>.GetAll()
-        {
-            return GetAll(DbContext.Buisnesses);
-        }
-
-        IEnumerable<Meeting> IRepository<Meeting>.GetAll()
-        {
-            return GetAll(DbContext.Meetings);
+            return GetAll(DbContext.Set<ReturnType>());
         }
         #endregion
+
+
+        public int SaveChanges()
+        {
+            return DbContext.SaveChanges();
+        }
         private void Dispose(bool disposing)
         {
             if (disposing)

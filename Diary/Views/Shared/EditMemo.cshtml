@@ -1,0 +1,27 @@
+﻿@model Diary.Models.Memo
+
+@using (Ajax.BeginForm("Edit", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "formBody", InsertionMode = InsertionMode.Replace }))
+{
+    <div class="modal fade" id="EditMemoModal" tabindex="-1" role="dialog" aria-labelledby="AddMemoModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close"><span></span></button>
+                </div>
+                <div class="modal-body" id="formBody">
+                    @Html.ValidationMessage("notfound")
+                    <div class="form-group hide">
+                        @Html.HiddenFor(x => x.Id)
+                    </div>
+                    @Html.Partial("AddMemo", Model)
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <input id="addModalButton" type="submit" class="btn btn-primary" value="Сохранить" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

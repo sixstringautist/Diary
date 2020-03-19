@@ -1,0 +1,15 @@
+﻿@using Diary.Models
+@model Memo
+
+<td>@Html.CheckBox("box", false, new { @class = "sel" })</td>
+<td name="id">@Html.DisplayFor(e => e.Id)</td>
+<td class="editable" name="type">@Html.DisplayFor(e => e.Type)</td>
+<td class="editable" name="theme">@Html.DisplayFor(e => e.Theme)</td>
+<td class="editable" name="starttime">@Html.DisplayFor(e => e.StartTime)</td>
+<td name="endtime">@Html.DisplayFor(e => (e as Buisness).EndTime)</td>
+<td name="address">@Html.DisplayFor(e => (e as Meeting).Address)</td>
+<td name="isdone">@Html.DisplayFor(e => e.IsDone)</td>
+@if (!Model.IsDone)
+{
+    <td><button class="btn btn-dark editButton">Редактировать</button></td>
+}

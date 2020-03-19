@@ -1,31 +1,176 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@using Diary.Models
+@using System.Web.Mvc
+@model Memo
+@{
+    ViewBag.Title = "Main";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+<div class="container container-md">
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th></th>
+                <th>Id</th>
+                <th>Тип записи</th>
+                <th>Тема</th>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+                <th>Адрес</th>
+                <th>Завершено</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Memo el in ViewBag.MemoCollection)
+            {
+                <tr>
+                    @Html.Partial("MemoTableView", el)
+                </tr>
+            }
+            <tr id="ajaxResult">
+            </tr>
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="col-md-2">
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Добавить запись
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a href="#AddMemoModal" class="dropdown-item" data-toggle="modal" data-target="#AddMemoModal">
+                        Добавить памятку
+                    </a>
+                    <a href="#AddBuisnessModal" class="dropdown-item" data-toggle="modal" data-target="#AddBuisnessModal">
+                        Добавить дело
+                    </a>
+                    <a href="#AddMeetingModal" class="dropdown-item" data-toggle="modal" data-target="#AddMeetingModal">
+                        Добавить встречу
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3"> <button id="delete" class="btn btn-primary"> Удалить выбранные</button></div>
+        <div class="col-md-3"> <button id="markEnded" class="btn btn-primary"> Пометить выполненными</button></div>
+    </div>
+    <div class="row">
+        <div id="Edit">
+        </div>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+@using (Ajax.BeginForm("Add", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "AddMemoBody", InsertionMode = InsertionMode.Replace }))
+{
+    <div class="modal fade" id="AddMemoModal" tabindex="-1" role="dialog" aria-labelledby="AddMemoModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close"><span></span></button>
+                </div>
+                <div class="modal-body" id="AddMemoBody">
+                    @{Html.RenderPartial("AddMemo");}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <input id="addModalButton" type="submit" class="btn btn-primary" value="Сохранить" />
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+}
+
+@using (Ajax.BeginForm("Add", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "AddBuisnessBody", InsertionMode = InsertionMode.Replace }))
+{
+    <div class="modal fade" id="AddBuisnessModal" tabindex="-1" role="dialog" aria-labelledby="AddBuisnessModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close"><span></span></button>
+                </div>
+                <div class="modal-body" id="AddBuisnessBody">
+                    @{Html.RenderPartial("AddBuisness");}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <input id="addModalButton" type="submit" class="btn btn-primary" value="Сохранить" />
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+}
+
+@using (Ajax.BeginForm("Add", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "AddMeetingBody", InsertionMode = InsertionMode.Replace }))
+{
+    <div class="modal fade" id="AddMeetingModal" tabindex="-1" role="dialog" aria-labelledby="AddMeetingModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close"><span></span></button>
+                </div>
+                <div class="modal-body" id="AddMeetingBody">
+                    @{Html.RenderPartial("AddMeeting");}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <input id="addModalButton" type="submit" class="btn btn-primary" value="Сохранить" />
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+}
+
+
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        function GetCheckedIds()
+        {
+            const arr = [];
+            const inputs = $("input:checked.sel");
+            inputs.each(function(index){
+                        arr.push(parseInt($(this).parent().parent().find("[name='id']").html()));
+            });
+            return arr;
+        }
+
+        $(document).ready(() => {
+            $("#delete").click(function (){
+                const arr = GetCheckedIds();
+                if (arr.length > 0)
+                {
+                    $.post('@Url.Action("Delete")', JSON.stringify(arr), function () { location.reload(true);});
+                }
+            });
+            $("#markEnded").click(function () {
+                const arr = GetCheckedIds();
+                if (arr.length > 0)
+                {
+                    $.post('@Url.Action("MakeComplete")', JSON.stringify(arr), function () { location.reload(true);});
+                }
+            });
+            $(".editButton").click(function (e) {
+                e.preventDefault();
+                const id = parseInt($(this).parent().parent().find("[name='id']").html());
+                $.ajax({
+                    method: "GET",
+                    contentType: "application/json",
+                    url: "@Url.Action("edit")/"+id,
+                    success: function (response)
+                    {
+                        var tmp = $(response)
+                        $(document.body).append(tmp);
+                        tmp.children(".modal").modal("show");
+                    }
+
+                });
+            });
+        });
+    </script>
+}
