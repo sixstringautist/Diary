@@ -1,7 +1,7 @@
 ﻿
+using Diary.Models;
 using Ninject.Modules;
 using Ninject.Web.Common;
-using Diary.Models;
 using System.Configuration;
 
 namespace Diary.Util

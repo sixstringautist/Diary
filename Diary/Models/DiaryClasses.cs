@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Diary.Util;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Globalization;
-using Diary.Util;
 namespace Diary.Models
 {
     public class Memo : IValidatableObject
