@@ -13,17 +13,20 @@ namespace Diary.Models
         private string type;
         [Required]
         [RegularExpression("Памятка|Дело|Встреча")]
-        public string Type { get => type; set => type = value; }
+        public string Type { get => type; protected set => type = value; }
         [Required(ErrorMessage = "Тема обязательна для заполнения!")]
         [RegularExpression("[А-я]{3,100}")]
         public string Theme { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]
-        [DatetimeFormatValidation]
+        [DatetimeFormatValidationWithHours]
         public DateTime? StartTime { get; set; }
 
-
+        public Memo()
+        {
+            Type = "Памятка";
+        }
 
         public bool IsDone { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -39,10 +42,14 @@ namespace Diary.Models
 
         [Required]
         [DataType(DataType.DateTime)]
-        [DatetimeFormatValidation]
+        [DatetimeFormatValidationWithHours]
         public DateTime? EndTime { get; set; }
 
 
+        public Buisness()
+        {
+            Type = "Дело";
+        }
         public static int Compare(Buisness e1, Buisness e2)
         {
             return e1.StartTime <= e2.EndTime && e1.EndTime >= e2.StartTime ? 0
@@ -62,6 +69,10 @@ namespace Diary.Models
     public class Meeting : Buisness
 
     {
+        public Meeting()
+        {
+            Type = "Встреча";
+        }
         [Required]
         public string Address { get; set; }
 

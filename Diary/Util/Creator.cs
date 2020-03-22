@@ -53,7 +53,6 @@ namespace Diary.Util
                 StartTime = tmp,
                 IsDone = isDone,
                 Theme = (string)dict["Theme"],
-                Type = (string)dict["Type"],
                 Id = id
             };
         }
@@ -92,7 +91,6 @@ namespace Diary.Util
                 EndTime = tmp2,
                 Theme = (string)dict["Theme"],
                 IsDone = isDone,
-                Type = (string)dict["Type"],
                 Id = id
             };
         }
@@ -135,7 +133,6 @@ namespace Diary.Util
                 Theme = (string)dict["Theme"],
                 Address = (string)dict["Address"],
                 IsDone = isDone,
-                Type = (string)dict["Type"],
                 Id = id
             };
         }

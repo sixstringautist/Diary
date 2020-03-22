@@ -1,63 +1,91 @@
 ﻿@using Diary.Models
 @using System.Web.Mvc
-@model Memo
+@using X.PagedList.Mvc
+@using X.PagedList
+@model MainViewModel
 @{
     ViewBag.Title = "Main";
 }
 
-<div class="container container-md">
-    <table class="table">
-        <thead class="thead-light">
-            <tr>
-                <th></th>
-                <th>Id</th>
-                <th>Тип записи</th>
-                <th>Тема</th>
-                <th>Дата начала</th>
-                <th>Дата окончания</th>
-                <th>Адрес</th>
-                <th>Завершено</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (Memo el in ViewBag.MemoCollection)
-            {
+<div class="container container-md" style="padding:5px">
+        @using (Html.BeginForm("Index", "Home", FormMethod.Get))
+        {
+        <div class="form-row">
+            <div class="col-auto">
+                @Html.TextBox("DateStartFilter", null, new { @class = "form-control", placeholder = "Введите дату начала события" })
+                @Html.ValidationMessageFor(x=> x.DateStartFilter,null,new {@class="text-danger"})
+            </div>
+            <div class="col-auto">
+                @Html.TextBox("DateEndFilter", null, new { @class = "form-control", placeholder = "Введите дату окончания события" })
+                @Html.ValidationMessageFor(x => x.DateEndFilter, null, new { @class = "text-danger" })
+            </div>
+            <div class="col-auto">
+                @Html.DropDownList("Type", new SelectList(new List<string>() { "Все", "Памятка", "Дело", "Встреча" }), new { @class = "form-control" })
+            </div>
+            <div class="col-auto">
+                <input type="submit" name="filter" class="form-control" value="Применить фильтр" />
+            </div>
+            @Html.ValidationMessage("filter",new { @class="text-danger"})
+        </div>
+        }
+        <table class="table">
+            <thead class="thead-light">
                 <tr>
-                    @Html.Partial("MemoTableView", el)
+                    <th></th>
+                    <th>Id</th>
+                    <th>Тип записи</th>
+                    <th>Тема</th>
+                    <th>Дата начала</th>
+                    <th>Дата окончания</th>
+                    <th>Адрес</th>
+                    <th>Завершено</th>
+                    <th></th>
+                    <th></th>
                 </tr>
-            }
-            <tr id="ajaxResult">
-            </tr>
-        </tbody>
-    </table>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Добавить запись
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a href="#AddMemoModal" class="dropdown-item" data-toggle="modal" data-target="#AddMemoModal">
-                        Добавить памятку
-                    </a>
-                    <a href="#AddBuisnessModal" class="dropdown-item" data-toggle="modal" data-target="#AddBuisnessModal">
-                        Добавить дело
-                    </a>
-                    <a href="#AddMeetingModal" class="dropdown-item" data-toggle="modal" data-target="#AddMeetingModal">
-                        Добавить встречу
-                    </a>
+            </thead>
+            <tbody>
+                @foreach (Memo el in Model.Memos)
+                {
+                    <tr>
+                        @Html.Partial("MemoTableView", el)
+                    </tr>
+                }
+                <tr id="ajaxResult">
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            Страница @(Model.Memos.PageCount < Model.Memos.PageNumber ? 0 : Model.Memos.PageNumber) из @Model.Memos.PageCount
+        </div>
+        <div class="row">
+            @Html.PagedListPager(Model.Memos, page => Url.Action("Index", new { page, Type=Model.TypeFilter, dateStartFilter = Model.DateStartFilter?.ToString("d"), dateEndFilter = Model.DateStartFilter?.ToString("d") }), new X.PagedList.Mvc.Common.PagedListRenderOptionsBase
+            {
+           LiElementClasses = new string[] { "page-item" },
+           PageClasses = new string[] { "page-link" }
+            })
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Добавить запись
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a href="#AddMemoModal" class="dropdown-item" data-toggle="modal" data-target="#AddMemoModal">
+                            Добавить памятку
+                        </a>
+                        <a href="#AddBuisnessModal" class="dropdown-item" data-toggle="modal" data-target="#AddBuisnessModal">
+                            Добавить дело
+                        </a>
+                        <a href="#AddMeetingModal" class="dropdown-item" data-toggle="modal" data-target="#AddMeetingModal">
+                            Добавить встречу
+                        </a>
+                    </div>
                 </div>
             </div>
+            <div class="col-auto"> <button id="delete" class="btn btn-primary"> Удалить выбранные</button></div>
+            <div class="col-auto"> <button id="markEnded" class="btn btn-primary"> Пометить выполненными</button></div>
         </div>
-        <div class="col-md-3"> <button id="delete" class="btn btn-primary"> Удалить выбранные</button></div>
-        <div class="col-md-3"> <button id="markEnded" class="btn btn-primary"> Пометить выполненными</button></div>
-    </div>
-    <div class="row">
-        <div id="Edit">
-        </div>
-    </div>
 </div>
 
 @using (Ajax.BeginForm("Add", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "AddMemoBody", InsertionMode = InsertionMode.Replace }))
@@ -70,7 +98,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="close"><span></span></button>
                 </div>
                 <div class="modal-body" id="AddMemoBody">
-                    @{Html.RenderPartial("AddMemo");}
+                    @Html.Partial("AddMemo", new Memo())
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
@@ -91,7 +119,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="close"><span></span></button>
                 </div>
                 <div class="modal-body" id="AddBuisnessBody">
-                    @{Html.RenderPartial("AddBuisness");}
+                    @Html.Partial("AddBuisness",new Buisness())
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
@@ -112,7 +140,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="close"><span></span></button>
                 </div>
                 <div class="modal-body" id="AddMeetingBody">
-                    @{Html.RenderPartial("AddMeeting");}
+                    @Html.Partial("AddMeeting",new Meeting())
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
@@ -141,14 +169,16 @@
         }
 
         $(document).ready(() => {
-            $("#delete").click(function (){
+            $("#delete").click(function (e) {
+                e.preventDefault();
                 const arr = GetCheckedIds();
                 if (arr.length > 0)
                 {
                     $.post('@Url.Action("Delete")', JSON.stringify(arr), function () { location.reload(true);});
                 }
             });
-            $("#markEnded").click(function () {
+            $("#markEnded").click(function (e) {
+                e.preventDefault();
                 const arr = GetCheckedIds();
                 if (arr.length > 0)
                 {

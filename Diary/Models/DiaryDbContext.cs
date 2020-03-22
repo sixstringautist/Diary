@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 namespace Diary.Models
 {
@@ -14,8 +15,27 @@ namespace Diary.Models
         {
             protected override void Seed(DiaryDbContext context)
             {
-                var tmp = new Memo() { StartTime = DateTime.Now + TimeSpan.FromMinutes(50), Theme = "Тест", Type = "Памятка" };
-                context.Memos.Add(tmp);
+                var r = new Random();
+                List<Memo> tmp = new List<Memo>();
+                for (int i = 0; i < 50; i++)
+                {
+                    switch (r.Next(0, 3))
+                    {
+                        case 0:
+                            tmp.Add(new Memo { StartTime = DateTime.Now + TimeSpan.FromMinutes(r.Next(5, 20)), Theme = "Тест" });
+                            break;
+                        case 1:
+                            tmp.Add(new Buisness() { StartTime = DateTime.Now + TimeSpan.FromMinutes(r.Next(5,20)), Theme="Тест", EndTime=DateTime.Now + TimeSpan.FromMinutes(r.Next(22,36))});
+                            break;
+                        case 2:
+                            tmp.Add(new Meeting() { StartTime = DateTime.Now + TimeSpan.FromMinutes(r.Next(5, 20)), 
+                                Theme = "Тест",
+                                EndTime = DateTime.Now + TimeSpan.FromMinutes(r.Next(21, 36)),
+                            Address=$"ул. Пушкина, д.{r.Next(1,100)}"});
+                            break;
+                    }
+                }
+                context.Memos.AddRange(tmp);
                 context.SaveChanges();
             }
         }

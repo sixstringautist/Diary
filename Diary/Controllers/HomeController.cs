@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 using System.Json;
 using System.IO;
 using Diary.Models;
+using System.Globalization;
+using X.PagedList;
+using X.PagedList.Mvc;
 
 namespace Diary.Controllers
 {
@@ -18,10 +21,28 @@ namespace Diary.Controllers
         {
             this.u = u;
         }
-        public ActionResult Index()
+
+        public ActionResult Index(int page = 1, string dateStartFilter = null, string dateEndFilter = null, string Type = "Все")
         {
-            ViewBag.MemoCollection = u.GetAll<Memo>().ToList();
-            return View();
+            DateTime StartDate = default;
+            DateTime EndDate = default;
+            if (!(dateStartFilter == null || dateEndFilter == null))
+            {
+                DateTime.TryParseExact(dateStartFilter, "dd.MM.yyyy", new CultureInfo("ru-RU"), DateTimeStyles.None, out StartDate);
+                DateTime.TryParseExact(dateEndFilter, "dd.MM.yyyy", new CultureInfo("ru-RU"), DateTimeStyles.None, out EndDate);
+            }
+            if((dateStartFilter != "" && dateEndFilter == "") || (dateStartFilter == "" && dateEndFilter != ""))
+            ModelState.AddModelError("filter", "Оба поля должны быть заполнены");
+            var model = new MainViewModel()
+            {
+                DateEndFilter = (EndDate == DateTime.MinValue ? (DateTime?)null : EndDate),
+                DateStartFilter = (StartDate == DateTime.MinValue ? (DateTime?)null : StartDate),
+                TypeFilter = Type,
+            };
+            TryValidateModel(model);
+            model.SetPagedList(u, (page, 10));
+
+            return View("Index", model);
         }
 
         [HttpPost]
@@ -65,7 +86,7 @@ namespace Diary.Controllers
                 switch (tmp.Type)
                 {
                     case "Памятка":
-                        return PartialView("EditMemo",tmp);
+                        return PartialView("EditMemo", tmp);
                     case "Встреча":
                         return PartialView("EditMeeting", tmp);
                     case "Дело":
@@ -84,13 +105,13 @@ namespace Diary.Controllers
                     {
                         var tmp = u.Get<Memo>(x => x.Id == m.Id);
                         if (tmp == null)
-                            ModelState.AddModelError("notfound","Запись не найдена!");
+                            ModelState.AddModelError("notfound", "Запись не найдена!");
                         tmp.StartTime = m.StartTime;
                         tmp.Theme = m.Theme;
                         u.SaveChanges();
                         return JavaScript("location.reload(true)");
                     }
-                    else return PartialView("AddMemo",m);
+                    else return PartialView("AddMemo", m);
                 case "Встреча":
                     var met = m as Meeting;
                     if (TryValidateModel(met))
@@ -112,10 +133,11 @@ namespace Diary.Controllers
                         tmp2.Theme = b.Theme;
                         tmp2.StartTime = b.StartTime;
                         tmp2.EndTime = b.EndTime;
+                        u.SaveChanges();
                         return JavaScript("location.reload(true)");
                     }
                     else return PartialView("AddBuisness", b);
-                default: 
+                default:
                     return RedirectToAction("Index");
             }
         }
@@ -165,7 +187,7 @@ namespace Diary.Controllers
                             return PartialView("AddMeeting", tmp1);
                         }
                     }
-                    else return PartialView("AddMeeting", m as Meeting);
+                    else return PartialView("AddMeeting", tmp1);
                 default: return RedirectToAction("Index");
             }
         }
