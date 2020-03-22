@@ -12,11 +12,11 @@
         {
         <div class="form-row">
             <div class="col-auto">
-                @Html.TextBox("DateStartFilter", null, new { @class = "form-control", placeholder = "Введите дату начала события" })
+                @Html.TextBox("DateStartFilter", null, new { @class = "form-control", placeholder = "Введите начало диапазона " })
                 @Html.ValidationMessageFor(x=> x.DateStartFilter,null,new {@class="text-danger"})
             </div>
             <div class="col-auto">
-                @Html.TextBox("DateEndFilter", null, new { @class = "form-control", placeholder = "Введите дату окончания события" })
+                @Html.TextBox("DateEndFilter", null, new { @class = "form-control", placeholder = "Введите окончание диапазона" })
                 @Html.ValidationMessageFor(x => x.DateEndFilter, null, new { @class = "text-danger" })
             </div>
             <div class="col-auto">

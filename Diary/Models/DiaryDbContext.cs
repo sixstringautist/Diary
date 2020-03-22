@@ -22,13 +22,13 @@ namespace Diary.Models
                     switch (r.Next(0, 3))
                     {
                         case 0:
-                            tmp.Add(new Memo { StartTime = DateTime.Now + TimeSpan.FromMinutes(r.Next(5, 20)), Theme = "Тест" });
+                            tmp.Add(new Memo { StartTime = DateTime.Now + TimeSpan.FromHours(r.Next(5, 20)), Theme = "Тест" });
                             break;
                         case 1:
-                            tmp.Add(new Buisness() { StartTime = DateTime.Now + TimeSpan.FromMinutes(r.Next(5,20)), Theme="Тест", EndTime=DateTime.Now + TimeSpan.FromMinutes(r.Next(22,36))});
+                            tmp.Add(new Buisness() { StartTime = DateTime.Now + TimeSpan.FromHours(r.Next(5,20)), Theme="Тест", EndTime=DateTime.Now + TimeSpan.FromHours(r.Next(22,36))});
                             break;
                         case 2:
-                            tmp.Add(new Meeting() { StartTime = DateTime.Now + TimeSpan.FromMinutes(r.Next(5, 20)), 
+                            tmp.Add(new Meeting() { StartTime = DateTime.Now + TimeSpan.FromHours(r.Next(5, 20)), 
                                 Theme = "Тест",
                                 EndTime = DateTime.Now + TimeSpan.FromMinutes(r.Next(21, 36)),
                             Address=$"ул. Пушкина, д.{r.Next(1,100)}"});
@@ -42,7 +42,6 @@ namespace Diary.Models
 
         public DiaryDbContext(string connectionString) : base(connectionString)
         {
-            //TODO: Не забудь изменить на CreateIfNotExist
             Database.SetInitializer(new Initializer());
             Database.Initialize(false);
         }
