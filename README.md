@@ -1,5 +1,6 @@
 # Diary
 For HTC
+</br>
 Стек технологий использующихся в проекте:
 1. ASP.NET MVC 5(.NET Framework v 4.8)
 2. EntityFramework v6.4.0(Подход Code First)
